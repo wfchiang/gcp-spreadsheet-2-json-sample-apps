@@ -1,0 +1,2 @@
+runtime: nodejs10
+service: ss2json-nodejs-db

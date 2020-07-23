@@ -1,0 +1,7 @@
+runtime: nodejs10
+service: ss2json-simple-db
+
+handlers: 
+- url: .*
+  static_files: public/index.html
+  upload: public/index.html
