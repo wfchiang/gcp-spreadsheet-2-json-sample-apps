@@ -5,7 +5,9 @@ class GoogleLoginButton extends React.Component {
     constructor(props) {
         super(props);
 
-        this.testData = ''; 
+        this.state = {
+            spreadsheetData: {}
+        }; 
         
         // try to store the google credentials 
         let fragmentString = location.hash.substring(1);
@@ -27,7 +29,23 @@ class GoogleLoginButton extends React.Component {
 
         // bind class function 
         this.authLogin = this.authLogin.bind(this); 
-        this.testRead = this.testRead.bind(this); 
+        this.readSpreadsheet = this.readSpreadsheet.bind(this); 
+        this.makeGetParams = this.makeGetParams.bind(this); 
+        this.isUndefined = this.isUndefined.bind(this); 
+        this.isObject = this.isObject.bind(this); 
+        this.isArray = this.isArray.bind(this); 
+    }
+
+    isUndefined(v) {
+        return (typeof v === 'undefined'); 
+    }
+    
+    isObject(v) {
+        return ((typeof v === 'object') && (v.constructor === Object));
+    }
+    
+    isArray(v) {
+        return ((typeof v === 'object') && (v.constructor === Array)); 
     }
 
     authLogin() {
@@ -56,26 +74,44 @@ class GoogleLoginButton extends React.Component {
         loginForm.submit(); 
     }
 
-    testRead() {
+    makeGetParams (getParams) { 
+        let paramString = ''; 
+        let paramKeys = Object.getOwnPropertyNames(getParams); 
+        if (paramKeys.length == 0) {
+            return paramString; 
+        }
+        paramString = paramKeys[0] + '=' + encodeURIComponent(getParams[paramKeys[0]]); 
+        if (paramKeys.length > 1) {
+            for (let i = 1 ; i < paramKeys.length ; i++) {
+                paramString = paramString + '&' + paramKeys[i] + '=' + encodeURIComponent(getParams[paramKeys[i]]); 
+            }    
+        }
+        return paramString; 
+    }
+
+    readSpreadsheet() {
         if (localStorage.getItem('token_type') && localStorage.getItem('access_token')) {
-            let authToken = localStorage.getItem('token_type') + ' ' + localStorage.getItem('access_token');
-            let spreadsheetId = '1PnVWC9j-P8lL7EzhMKRKnSuwmf2qDE2avSLIZJYSISg';
-            let dataRange = 'sheet0!A1:D5';   
-            let url = 'https://sheets.googleapis.com/v4/spreadsheets/' + encodeURIComponent(spreadsheetId) + '/values/' + encodeURIComponent(dataRange); 
-            fetch(url, {
-                method: 'GET', 
-                headers: {
-                    'Authorization': authToken
+            let getParams = {}; 
+            getParams['spreadsheetId'] = '1PnVWC9j-P8lL7EzhMKRKnSuwmf2qDE2avSLIZJYSISg';
+            getParams['sheetId'] = 'sheet0'; 
+            let url = 'https://ss2json-dot-wfchiang-dev.uc.r.appspot.com/readSheetData?' + this.makeGetParams(getParams); 
+            let xhr = new XMLHttpRequest();
+            xhr.open('GET', url); 
+            xhr.setRequestHeader('Authorization', localStorage.getItem('token_type') + ' ' + localStorage.getItem('access_token')); 
+            xhr.onreadystatechange = function (e) {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    console.info(' xhr.response > ' + xhr.response);
+                    this.setState({
+                        spreadsheetData: JSON.parse(xhr.response)
+                    }); 
+                } else { 
+                    console.info(' xhr state-status > ' + xhr.readyState + '-' + xhr.status); 
                 }
-            })
-            .then(res => res.json())
-            .then(function(res){
-                console.info('>> here uuuu go ' + JSON.stringify(res)); 
-                this.setTestData(JSON.stringify(res)); 
-            }); 
+            }.bind(this);
+            xhr.send(null);
         }
         else {
-            this.setTestData('No Token...'); 
+            console.info('No token... cannot read the spreadsheet');
         }
     }
     
@@ -83,8 +119,28 @@ class GoogleLoginButton extends React.Component {
         return (
             <div>
                 <button onClick={this.authLogin}>Auth Login</button>
-                <button onClick={this.testRead}>Test Read</button>
-                <pre>Test Data [{this.testData}]</pre>
+                <button onClick={this.readSpreadsheet}>Test Read</button>
+                <h2>Spreadsheet Table</h2>
+                {(this.isObject(this.state.spreadsheetData) && this.isArray(this.state.spreadsheetData.columnTitles) && this.isArray(this.state.spreadsheetData.rows)) &&
+                    <table>
+                        <tbody>
+                            <tr>
+                                <th>Index</th>
+                                {this.state.spreadsheetData.columnTitles.map((ct, i) => 
+                                    <th key={ct+String(i)}>{ct}</th>
+                                )}
+                            </tr>
+                            {this.state.spreadsheetData.rows.map((row, i) => 
+                                <tr key={'ss-row-'+String(i)}>
+                                <td>{row.rowIndex}</td>
+                                {this.state.spreadsheetData.columnTitles.map((ct, j) => 
+                                    <td key={'ss-cell-'+String(i)+'-'+String(j)}>{row.data[ct]}</td>
+                                )}
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                }
             </div>
         ); 
     }
