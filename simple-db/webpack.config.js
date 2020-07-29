@@ -12,7 +12,7 @@ const rules = [
     {
         test: /\.css$/,
         exclude: /node_modules/,
-        use: ['css-loader'],
+        use: ['style-loader', 'css-loader'],
     },
     {
         test: /\.html$/,
@@ -23,7 +23,7 @@ module.exports = {
     entry: path.join(__dirname, 'src', 'index.js'),
     output: {
         path: path.resolve(__dirname, 'build'),
-        filename: 'index.js',
+        filename: 'static/js/index.js',
     },
     module: { rules },
     plugins: [
