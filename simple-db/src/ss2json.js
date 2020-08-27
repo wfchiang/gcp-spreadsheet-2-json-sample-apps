@@ -1,5 +1,5 @@
 import React from 'react'
-import SpreadsheetRow from './spreadsheetRow'
+import SpreadsheetTable from './SpreadsheetTable'
 import ClientSecret from './client_secret.json'
 
 class GoogleLoginButton extends React.Component {
@@ -7,8 +7,8 @@ class GoogleLoginButton extends React.Component {
         super(props);
 
         this.state = {
-            spreadsheetData: {}, 
-            backupSpreadsheetData: {}
+            activeData: {}, 
+            backupData: {}
         }; 
         
         // try to store the google credentials 
@@ -37,10 +37,13 @@ class GoogleLoginButton extends React.Component {
         this.isObject = this.isObject.bind(this); 
         this.isArray = this.isArray.bind(this); 
 
-        // to be removed 
-        this.testColTitles = ['abc', 'xyz']; 
-        this.data = {'rowIndex': '11', 'data': {'abc': '123', 'xyz': '456'}}
-        this.backup = {'rowIndex': '11', 'data': {'abc': '123', 'xyz': '456'}}
+        // to be removed
+        this.testTableId = {"spreadsheetId": "abcxyz123", "sheetId": "123456" }; 
+        this.testTableColTitltes = ["COL-1", "COL-2"]; 
+        this.testTableActiveRows = [{"rowIndex": "101", "data": {"COL-1": "123", "COL-2": "456"}}, {"rowIndex": "102", "data": {"COL-1": "111", "COL-2": "222"}}];
+        this.testTableBackupRows = [{"rowIndex": "101", "data": {"COL-1": "123", "COL-2": "456"}}, {"rowIndex": "102", "data": {"COL-1": "111", "COL-2": "222"}}];
+        this.testTableActive = { "id": this.testTableId, "columnTitles": this.testTableColTitltes, "rows": this.testTableActiveRows }; 
+        this.testTableBackup = { "id": this.testTableId, "columnTitles": this.testTableColTitltes, "rows": this.testTableBackupRows }; 
     }
 
     isUndefined(v) {
@@ -109,8 +112,8 @@ class GoogleLoginButton extends React.Component {
                 if (xhr.readyState === 4 && xhr.status === 200) {
                     console.debug(' xhr.response > ' + xhr.response);
                     this.setState({
-                        spreadsheetData: JSON.parse(xhr.response), 
-                        backupSpreadsheetData: JSON.parse(xhr.response)
+                        activeData: JSON.parse(xhr.response), 
+                        backupData: JSON.parse(xhr.response)
                     }); 
                 } else { 
                     console.debug(' xhr state-status > ' + xhr.readyState + '-' + xhr.status); 
@@ -129,33 +132,15 @@ class GoogleLoginButton extends React.Component {
                 <button onClick={this.authLogin}>Auth Login</button>
                 <button onClick={this.readSpreadsheet}>Test Read</button>
                 <h2>Spreadsheet Table</h2>
-                {(this.isObject(this.state.spreadsheetData) && this.isArray(this.state.spreadsheetData.columnTitles) && this.isArray(this.state.spreadsheetData.rows)) &&
-                    <table>
-                        <tbody>
-                            <SpreadsheetRow 
-                                isHeader={true}
-                                colTitles={this.state.spreadsheetData.columnTitles} />
-                            {this.state.spreadsheetData.rows.map((row, i) => 
-                                <SpreadsheetRow 
-                                    isHeader={false} 
-                                    colTitles={this.state.spreadsheetData.columnTitles} 
-                                    activeData={this.state.spreadsheetData.rows[i]} 
-                                    backupData={this.state.backupSpreadsheetData.rows[i]} />
-                            )}
-                        </tbody>
-                    </table>
+                {(this.isObject(this.state.activeData) && this.isArray(this.state.activeData.columnTitles) && this.isArray(this.state.activeData.rows)) &&
+                    <SpreadsheetTable 
+                        activeData={this.state.activeData} 
+                        backupData={this.state.backupData} />
                 }
 
-                <table>
-                    <SpreadsheetRow 
-                        isHeader={true}
-                        colTitles={this.testColTitles} />
-                    <SpreadsheetRow 
-                        isHeader={false}
-                        colTitles={this.testColTitles}
-                        activeData={this.data}
-                        backupData={this.backup} />
-                </table>
+                <SpreadsheetTable 
+                    activeData={this.testTableActive}
+                    backupData={this.testTableBackup} />
             </div>
         ); 
     }

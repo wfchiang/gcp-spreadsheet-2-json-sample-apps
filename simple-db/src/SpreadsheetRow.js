@@ -1,4 +1,5 @@
 import React from 'react'
+import SpreadsheetCell from './SpreadsheetCell'
 
 class SpreadsheetRow extends React.Component {
     constructor (props) {
@@ -10,11 +11,11 @@ class SpreadsheetRow extends React.Component {
         if (!this.isHeader) {
             if (props.activeData.rowIndex == props.backupData.rowIndex) {
                 this.rowIndex = props.activeData.rowIndex; 
-                this.backupData = props.backupData.data; 
                 this.state = {
                     isDiff: false, 
                     inEdit: false, 
-                    data: props.activeData.data
+                    activeData: props.activeData.data, 
+                    backupData: props.backupData.data 
                 };
             }
             else {
@@ -36,9 +37,18 @@ class SpreadsheetRow extends React.Component {
         else {
             return (
                 <tr key={'ss-row-'+String(this.rowIndex)}>
-                    <td key={'ss-cell-'+String(this.rowIndex)}>{this.rowIndex}</td>
+                    <SpreadsheetCell 
+                        isFixed={true}  
+                        key={'ss-cell-'+String(this.rowIndex)} 
+                        activeData={this.rowIndex} />
                     {this.colTitles.map((ct, i_ct) => 
-                        <td key={'ss-cell-'+String(this.rowIndex)+'-'+String(ct)}>{this.state.data[ct]}</td>)}
+                        <SpreadsheetCell 
+                            isFixed={false} 
+                            key={'ss-cell-'+String(this.rowIndex)+'-'+String(ct)} 
+                            activeData={this.state.activeData[ct]} 
+                            backupData={this.state.activeData[ct]} /> )}
+                    {/* {this.colTitles.map((ct, i_ct) => 
+                        <td key={'ss-cell-'+String(this.rowIndex)+'-'+String(ct)}>{this.state.activeData[ct]}</td>)} */}
                 </tr>
             ); 
         }
