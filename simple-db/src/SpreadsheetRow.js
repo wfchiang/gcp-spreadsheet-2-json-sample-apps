@@ -28,9 +28,9 @@ class SpreadsheetRow extends React.Component {
         if (this.isHeader) {
             return (
                 <tr>
-                    <th>Index</th>
+                    <th key={'ss-header-rowIndex'}>Index</th>
                     {this.colTitles.map((ct, i_ct) => 
-                        <th>{ct}</th>)}
+                        <th key={'ss-header-'+String(this.rowIndex)+'-'+String(ct)}>{ct}</th>)}
                 </tr>
             ); 
         }
@@ -47,8 +47,6 @@ class SpreadsheetRow extends React.Component {
                             key={'ss-cell-'+String(this.rowIndex)+'-'+String(ct)} 
                             activeData={this.state.activeData[ct]} 
                             backupData={this.state.activeData[ct]} /> )}
-                    {/* {this.colTitles.map((ct, i_ct) => 
-                        <td key={'ss-cell-'+String(this.rowIndex)+'-'+String(ct)}>{this.state.activeData[ct]}</td>)} */}
                 </tr>
             ); 
         }
