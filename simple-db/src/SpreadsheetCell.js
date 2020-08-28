@@ -58,7 +58,7 @@ class SpreadsheetCell extends React.Component {
                         style={{
                             backgroundColor:this.state.textboxBgc
                         }} />
-                </td>)       
+                </td>);     
             }
             else {
                 return (
