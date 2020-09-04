@@ -3,6 +3,8 @@ import SpreadsheetTable from './SpreadsheetTable'
 import ClientSecret from './client_secret.json'
 import { isUndefined, isString, isObject, isArray} from './wfJsUtils'
 
+import './index.css'
+
 class SS2Json extends React.Component {
     constructor(props) {
         super(props);

@@ -1,6 +1,8 @@
 import React from 'react'
 import SpreadsheetRow from './SpreadsheetRow'
 
+import './index.css'
+
 class SpreadsheetTable extends React.Component {
     constructor (props) {
         super(props); 

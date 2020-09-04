@@ -4,7 +4,7 @@ class SpreadsheetCell extends React.Component {
     constructor (props) {
         super(props); 
 
-        this.cleanColor = '#C2EFFF'; 
+        this.cleanColor = '#DFF7FF'; 
         this.dirtyColor = '#FEC2B6'; 
 
         this.state = {
@@ -20,7 +20,7 @@ class SpreadsheetCell extends React.Component {
         this.handleOnChangeTextBox = this.handleOnChangeTextBox.bind(this); 
     }
 
-    handleOnClickText () {
+    handleOnClickText (event) {
         this.setState({
             cellKey: this.state.cellKey, 
             isFixed: this.state.isFixed, 

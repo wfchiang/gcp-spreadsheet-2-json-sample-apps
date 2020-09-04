@@ -11,3 +11,54 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.body-div {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-left: 10%;
+  margin-right: 10%; 
+  padding: 10px; 
+}
+
+.normal-div {
+  margin: 10px; 
+  padding: 5px; 
+}
+
+.center {
+  text-align: center;
+}
+
+table {
+  width: 95%;
+}
+
+th {
+  margin: 5px; 
+  padding: 5px;
+  border: 2px solid lightgray; 
+  font-size: 20px;
+}
+
+td {
+  margin: 5px;
+  padding: 5px;
+  border: 2px dashed lightgray; 
+  font-size: 16px; 
+}
+
+input {
+  margin: 5px;
+  padding: 5px; 
+  width: 95%;
+  font-size: 16px; 
+}
+
+h1 {
+  margin-top: 10px; 
+  margin-bottom: 10px;
+  margin-left: 10%;
+  margin-right: 10%; 
+  padding: 20px;
+  background-color: cornsilk;
+}
