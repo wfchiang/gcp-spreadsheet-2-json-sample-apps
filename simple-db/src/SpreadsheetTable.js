@@ -13,6 +13,13 @@ class SpreadsheetTable extends React.Component {
         }; 
     }
 
+    componentWillReceiveProps (newProps) {
+        this.setState({
+            activeData: newProps.activeData, 
+            backupData: newProps.backupData
+        }); 
+    } 
+
     makeRowKey (rowIndex) {
         return 'ss-row-' + String(rowIndex); 
     }
@@ -30,10 +37,12 @@ class SpreadsheetTable extends React.Component {
             <table>
                 <tbody>
                     <SpreadsheetRow 
+                        key={'header-row'}
                         isHeader={true}
                         colTitles={this.state.activeData.columnTitles} />
                     {this.state.activeData.rows.map((row, i) => 
                         <SpreadsheetRow 
+                            key={'data-row-'+String(i)}
                             isHeader={false} 
                             colTitles={this.state.activeData.columnTitles} 
                             activeData={this.state.activeData.rows[i]} 

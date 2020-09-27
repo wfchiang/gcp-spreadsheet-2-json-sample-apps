@@ -20,6 +20,17 @@ class SpreadsheetCell extends React.Component {
         this.handleOnChangeTextBox = this.handleOnChangeTextBox.bind(this); 
     }
 
+    componentWillReceiveProps (newProps) {
+        this.setState({
+            cellKey: newProps.cellKey, 
+            isFixed: newProps.isFixed, 
+            activeData: newProps.activeData, 
+            backupData: newProps.backupData, 
+            inEdit: false, 
+            textboxBgc: this.cleanColor 
+        });
+    }
+
     handleOnClickText (event) {
         this.setState({
             cellKey: this.state.cellKey, 

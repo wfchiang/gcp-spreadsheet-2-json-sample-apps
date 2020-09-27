@@ -30,6 +30,10 @@ class SS2Json extends React.Component {
         // Initialize state 
         this.state = {
             userInfo: undefined, 
+            spreadsheetInfo: {
+                spreadsheetId: '1PnVWC9j-P8lL7EzhMKRKnSuwmf2qDE2avSLIZJYSISg', 
+                sheetId: 'sheet0'
+            }, 
             activeData: {}, 
             backupData: {}
         };
@@ -45,6 +49,7 @@ class SS2Json extends React.Component {
         this.callbackLoadTableData = this.callbackLoadTableData.bind(this);    
         this.renderUserInfo = this.renderUserInfo.bind(this);    
         this.renderTableInfo = this.renderTableInfo.bind(this);   
+        this.handleOnChangeTextBox = this.handleOnChangeTextBox.bind(this); 
     }
     
     componentDidMount () {
@@ -94,6 +99,10 @@ class SS2Json extends React.Component {
         localStorage.removeItem('access_token'); 
         this.setState({
             userInfo: undefined, 
+            spreadsheetInfo: {
+                spreadsheetId: '', 
+                sheetId: ''
+            }, 
             activeData: {}, 
             backupData: {}
         });
@@ -120,6 +129,7 @@ class SS2Json extends React.Component {
                 console.debug(' xhr.response for userInfo > ' + xhr.response);
                 reactComp.setState({
                     userInfo: JSON.parse(xhr.response), 
+                    spreadsheetInfo: reactComp.state.spreadsheetInfo, 
                     activeData: reactComp.state.activeData,  
                     backupData: reactComp.state.backupData
                 });
@@ -137,6 +147,7 @@ class SS2Json extends React.Component {
                 console.debug(' xhr.response for tableData > ' + xhr.response);
                 reactComp.setState({
                     userInfo: reactComp.state.userInfo, 
+                    spreadsheetInfo: reactComp.state.spreadsheetInfo, 
                     activeData: JSON.parse(xhr.response), 
                     backupData: JSON.parse(xhr.response)
                 });
@@ -166,8 +177,8 @@ class SS2Json extends React.Component {
                 'Authorization': localStorage.getItem('token_type') + ' ' + localStorage.getItem('access_token')
             };
             let params = {
-                'spreadsheetId': '1PnVWC9j-P8lL7EzhMKRKnSuwmf2qDE2avSLIZJYSISg', 
-                'sheetId': 'sheet0'
+                'spreadsheetId': this.state.spreadsheetInfo.spreadsheetId,
+                'sheetId': this.state.spreadsheetInfo.sheetId
             }; 
             this.makeGetRequest(api, headers, params, this.callbackLoadTableData); 
         }
@@ -196,18 +207,69 @@ class SS2Json extends React.Component {
     }
 
     renderTableInfo () {
-        if (this.isLogin()) {
-            return (<button onClick={this.readSpreadsheet}>Test Read</button>); 
+        if (true || this.isLogin()) {
+            return (
+                <div>
+                    <p>
+                        Spreadsheet ID: 
+                        <input 
+                            id="input-spreadsheet-id" 
+                            type="text" 
+                            value={this.state.spreadsheetInfo.spreadsheetId}
+                            onChange={this.handleOnChangeTextBox} />
+                    </p>
+                    <p>
+                        Sheet ID: 
+                        <input 
+                            id="input-sheet-id"
+                            type="text" 
+                            value={this.state.spreadsheetInfo.sheetId}
+                            onChange={this.handleOnChangeTextBox} />
+                    </p>
+                    <button onClick={this.readSpreadsheet}>Test Read</button>
+                </div>
+            ); 
         }
         else {
             return (<div></div>); 
+        }
+    }
+
+    handleOnChangeTextBox(event) {
+        let id_elem = event.target.id; 
+        let val_elem = event.target.value; 
+        
+        if (id_elem == 'input-spreadsheet-id') {
+            this.setState({
+                userInfo: this.state.userInfo, 
+                spreadsheetInfo: {
+                    spreadsheetId: val_elem, 
+                    sheetId: this.state.spreadsheetInfo.sheetId, 
+                }, 
+                activeData: this.state.activeData, 
+                backupData: this.state.backupData 
+            });
+        }
+        else if (id_elem == 'input-sheet-id') {
+            this.setState({
+                userInfo: this.setState.userInfo, 
+                spreadsheetInfo: {
+                    spreadsheetId: this.state.spreadsheetInfo.spreadsheetId, 
+                    sheetId: val_elem 
+                }, 
+                activeData: this.state.activeData, 
+                backupData: this.state.backupData 
+            }); 
+        }
+        else {
+            console.error('Unhandled element: ' + String(id_elem)); 
         }
     }
     
     render() {
         return (
             <div>
-                <p>v3</p>
+                <p>v12</p>
                 <div>
                     <this.renderUserInfo />
                 </div>
